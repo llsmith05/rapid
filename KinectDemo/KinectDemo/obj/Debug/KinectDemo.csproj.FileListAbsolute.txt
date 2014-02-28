@@ -1,0 +1,24 @@
+c:\users\leland\documents\visual studio 2013\Projects\KinectDemo\KinectDemo\bin\Debug\KinectDemo.exe.config
+c:\users\leland\documents\visual studio 2013\Projects\KinectDemo\KinectDemo\bin\Debug\KinectDemo.exe
+c:\users\leland\documents\visual studio 2013\Projects\KinectDemo\KinectDemo\bin\Debug\KinectDemo.pdb
+c:\users\leland\documents\visual studio 2013\Projects\KinectDemo\KinectDemo\obj\Debug\KinectDemo.csprojResolveAssemblyReference.cache
+c:\users\leland\documents\visual studio 2013\Projects\KinectDemo\KinectDemo\obj\Debug\MainWindow.baml
+c:\users\leland\documents\visual studio 2013\Projects\KinectDemo\KinectDemo\obj\Debug\MainWindow.g.cs
+c:\users\leland\documents\visual studio 2013\Projects\KinectDemo\KinectDemo\obj\Debug\App.g.cs
+c:\users\leland\documents\visual studio 2013\Projects\KinectDemo\KinectDemo\obj\Debug\KinectDemo_MarkupCompile.cache
+c:\users\leland\documents\visual studio 2013\Projects\KinectDemo\KinectDemo\obj\Debug\KinectDemo.g.resources
+c:\users\leland\documents\visual studio 2013\Projects\KinectDemo\KinectDemo\obj\Debug\KinectDemo.Properties.Resources.resources
+c:\users\leland\documents\visual studio 2013\Projects\KinectDemo\KinectDemo\obj\Debug\KinectDemo.csproj.GenerateResource.Cache
+c:\users\leland\documents\visual studio 2013\Projects\KinectDemo\KinectDemo\obj\Debug\KinectDemo.exe
+c:\users\leland\documents\visual studio 2013\Projects\KinectDemo\KinectDemo\obj\Debug\KinectDemo.pdb
+c:\users\leland\documents\visual studio 2013\Projects\KinectDemo\KinectDemo\bin\Debug\Microsoft.Kinect.Toolkit.dll
+c:\users\leland\documents\visual studio 2013\Projects\KinectDemo\KinectDemo\bin\Debug\Microsoft.Kinect.Toolkit.pdb
+C:\Users\Leland\Documents\GitHub\rapid\KinectDemo\KinectDemo\bin\Debug\KinectDemo.exe.config
+C:\Users\Leland\Documents\GitHub\rapid\KinectDemo\KinectDemo\obj\Debug\KinectDemo.csprojResolveAssemblyReference.cache
+C:\Users\Leland\Documents\GitHub\rapid\KinectDemo\KinectDemo\obj\Debug\MainWindow.baml
+C:\Users\Leland\Documents\GitHub\rapid\KinectDemo\KinectDemo\obj\Debug\MainWindow.g.cs
+C:\Users\Leland\Documents\GitHub\rapid\KinectDemo\KinectDemo\obj\Debug\App.g.cs
+C:\Users\Leland\Documents\GitHub\rapid\KinectDemo\KinectDemo\obj\Debug\KinectDemo_MarkupCompile.cache
+C:\Users\Leland\Documents\GitHub\rapid\KinectDemo\KinectDemo\obj\Debug\KinectDemo.g.resources
+C:\Users\Leland\Documents\GitHub\rapid\KinectDemo\KinectDemo\obj\Debug\KinectDemo.Properties.Resources.resources
+C:\Users\Leland\Documents\GitHub\rapid\KinectDemo\KinectDemo\obj\Debug\KinectDemo.csproj.GenerateResource.Cache
