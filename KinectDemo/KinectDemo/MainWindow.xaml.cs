@@ -38,12 +38,21 @@ namespace KinectDemo
             //can't get the event handler for SensorChooser to generate here. need documentation for UI version in SDK 1.5
             //kinectSensorChooser1.KinectSensorChooser.Status ;
 
-            //initialize all streams and start sensor
-            _sensor.ColorStream.Enable();
-            _sensor.DepthStream.Enable();
-            _sensor.SkeletonStream.Enable();
-            _sensor.AllFramesReady += _sensor_AllFramesReady;
-            _sensor.Start();
+            if (KinectSensor.KinectSensors.Count > 0)
+            {
+                _sensor = KinectSensor.KinectSensors[0];
+
+                if (_sensor.Status == KinectStatus.Connected)
+                {
+                    //initialize all streams and start sensor
+                    _sensor.ColorStream.Enable();
+                    _sensor.DepthStream.Enable();
+                    _sensor.SkeletonStream.Enable();
+                    _sensor.AllFramesReady += _sensor_AllFramesReady;
+                    _sensor.Start();
+                }
+            }
+          
         }
 
         void _sensor_AllFramesReady(object sender, AllFramesReadyEventArgs e)
