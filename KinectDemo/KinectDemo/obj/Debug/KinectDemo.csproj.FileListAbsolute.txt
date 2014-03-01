@@ -28,3 +28,5 @@ C:\Users\Leland\Documents\GitHub\rapid\KinectDemo\KinectDemo\bin\Debug\Microsoft
 C:\Users\Leland\Documents\GitHub\rapid\KinectDemo\KinectDemo\bin\Debug\Microsoft.Kinect.Toolkit.pdb
 C:\Users\Leland\Documents\GitHub\rapid\KinectDemo\KinectDemo\obj\Debug\KinectDemo.exe
 C:\Users\Leland\Documents\GitHub\rapid\KinectDemo\KinectDemo\obj\Debug\KinectDemo.pdb
+C:\Users\Leland\Documents\GitHub\rapid\KinectDemo\KinectDemo\bin\Debug\Microsoft.Samples.Kinect.WpfViewers.dll
+C:\Users\Leland\Documents\GitHub\rapid\KinectDemo\KinectDemo\bin\Debug\Microsoft.Samples.Kinect.WpfViewers.pdb

@@ -22,6 +22,15 @@ namespace KinectDemo
     /// </summary>
     public partial class MainWindow : Window
     {
+        //active sensor
+        private KinectSensor sensor;
+
+        //Bitmap
+        private WriteableBitmap colorBmp;
+
+        //byte array for intermediate camera data storate
+        private byte[] colorPixels;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -32,46 +41,86 @@ namespace KinectDemo
 
         }
 
-        KinectSensor _sensor;
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        //Start items on window load
+         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            //can't get the event handler for SensorChooser to generate here. need documentation for UI version in SDK 1.5
-            //kinectSensorChooser1.KinectSensorChooser.Status ;
-
-            if (KinectSensor.KinectSensors.Count > 0)
+            foreach (var potentialSensor in KinectSensor.KinectSensors)
             {
-                _sensor = KinectSensor.KinectSensors[0];
-
-                if (_sensor.Status == KinectStatus.Connected)
+                if (potentialSensor.Status == KinectStatus.Connected)
                 {
-                    //initialize all streams and start sensor
-                    _sensor.ColorStream.Enable();
-                    _sensor.DepthStream.Enable();
-                    _sensor.SkeletonStream.Enable();
-                    _sensor.AllFramesReady += _sensor_AllFramesReady;
-                    _sensor.Start();
+                    this.sensor = potentialSensor;
+                    break;
                 }
             }
-          
-        }
 
-        void _sensor_AllFramesReady(object sender, AllFramesReadyEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        void StopKinect(KinectSensor sensor)
-        {
-            if (sensor != null)
+            if (null != this.sensor)
             {
-                sensor.Stop();
-                sensor.AudioSource.Stop();
+                //Turn on color stream
+                this.sensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
+
+                //allocate space in byte array for pixel data
+                this.colorPixels = new byte[this.sensor.ColorStream.FramePixelDataLength];
+
+                //create bitmap to be displayed
+                this.colorBmp = new WriteableBitmap(this.sensor.ColorStream.FrameWidth, this.sensor.ColorStream.FrameWidth, 96, 96, PixelFormats.Bgr32, null);
+
+                //Point image in xaml to the bitmap above
+                this.imgCanvas.Source = this.colorBmp;
+
+                //add event handler for incoming frames
+                this.sensor.ColorFrameReady += sensor_ColorFrameReady;
+
+                //start the sensor
+                try
+                {
+                    this.sensor.Start();
+                }
+                catch (IOException)
+                {
+                    this.sensor = null;
+                }
+            }
+
+            if (null == this.sensor)
+            {
+                this.statusText.Text = "No Kinect Found!";
             }
         }
 
+        //Event handler for colorframe
+         void sensor_ColorFrameReady(object sender, ColorImageFrameReadyEventArgs e)
+         {
+             using (ColorImageFrame colorFrame = e.OpenColorImageFrame())
+             {
+                 if (colorFrame != null)
+                 {
+                     //copy from frame to temp array
+                     colorFrame.CopyPixelDataTo(this.colorPixels);
+
+                     //write pixel data to bitmap
+                     this.colorBmp.WritePixels(
+                         new Int32Rect(0, 0, this.colorBmp.PixelWidth, this.colorBmp.PixelHeight), 
+                         this.colorPixels, 
+                         this.colorBmp.PixelWidth * sizeof(int), 
+                         0);
+                 }
+             }
+         }
+
+
+         void StopKinect(KinectSensor sensor)
+         {
+             if (sensor != null)
+             {
+                 sensor.Stop();
+                 sensor.AudioSource.Stop();
+             }
+         }
+
+        //Shutdown sensor
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            StopKinect(_sensor);
+            this.sensor.Stop();
         }
     }
 }
