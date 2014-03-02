@@ -1,6 +1,7 @@
 ﻿using Microsoft.Kinect;
 using Microsoft.Kinect.Toolkit;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -62,7 +63,7 @@ namespace KinectDemo
                 this.colorPixels = new byte[this.sensor.ColorStream.FramePixelDataLength];
 
                 //create bitmap to be displayed
-                this.colorBmp = new WriteableBitmap(this.sensor.ColorStream.FrameWidth, this.sensor.ColorStream.FrameWidth, 96, 96, PixelFormats.Bgr32, null);
+                this.colorBmp = new WriteableBitmap(this.sensor.ColorStream.FrameWidth, this.sensor.ColorStream.FrameHeight, 96, 96, PixelFormats.Bgr32, null);
 
                 //Point image in xaml to the bitmap above
                 this.imgCanvas.Source = this.colorBmp;
