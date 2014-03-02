@@ -1,6 +1,7 @@
 ﻿using Microsoft.Kinect;
 using Microsoft.Kinect.Toolkit;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+//using System.Windows.Shapes;
+using Microsoft.Speech.AudioFormat;
+using Microsoft.Speech.Recognition;
 
 namespace KinectDemo
 {
@@ -32,6 +35,12 @@ namespace KinectDemo
         //byte array for intermediate camera data storate
         private byte[] colorPixels;
 
+        // Speech recognition engine using audio data from Kinect.
+        private SpeechRecognitionEngine speechEngine;
+
+        // List of all UI span elements used to select recognized text.
+        private List<Span> recognitionSpans;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -40,6 +49,28 @@ namespace KinectDemo
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        /// <summary>
+        /// Gets the metadata for the speech recognizer (acoustic model) most suitable to
+        /// process audio from Kinect device.
+        /// </summary>
+        /// <returns>
+        /// RecognizerInfo if found, <code>null</code> otherwise.
+        /// </returns>
+        private static RecognizerInfo GetKinectRecognizer()
+        {
+            foreach (RecognizerInfo recognizer in SpeechRecognitionEngine.InstalledRecognizers())
+            {
+                string value;
+                recognizer.AdditionalInfo.TryGetValue("Kinect", out value);
+                if ("True".Equals(value, StringComparison.OrdinalIgnoreCase) && "en-US".Equals(recognizer.Culture.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    return recognizer;
+                }
+            }
+
+            return null;
         }
 
         //Start items on window load
@@ -86,8 +117,86 @@ namespace KinectDemo
             {
                 this.statusText.Text = "No Kinect Found!";
             }
+
+            RecognizerInfo ri = GetKinectRecognizer();
+            if (null != ri)
+            {
+                //recognitionSpans = new List<Span> { pictureSpan };
+
+                this.speechEngine = new SpeechRecognitionEngine(ri.Id);
+
+                // Create a grammar from grammar definition XML file.
+                using (var memoryStream = new MemoryStream(Encoding.ASCII.GetBytes(Properties.Resources.SpeechGrammar)))
+                {
+                    var g = new Grammar(memoryStream);
+                    speechEngine.LoadGrammar(g);
+                }
+
+                speechEngine.SpeechRecognized += SpeechRecognized;
+                speechEngine.SpeechRecognitionRejected += SpeechRejected;
+
+                // For long recognition sessions (a few hours or more), it may be beneficial to turn off adaptation of the acoustic model. 
+                // This will prevent recognition accuracy from degrading over time.
+                ////speechEngine.UpdateRecognizerSetting("AdaptationOn", 0);
+
+                speechEngine.SetInputToAudioStream(
+                    sensor.AudioSource.Start(), new SpeechAudioFormatInfo(EncodingFormat.Pcm, 16000, 16, 1, 32000, 2, null));
+                speechEngine.RecognizeAsync(RecognizeMode.Multiple);
+            }
+            else
+            {
+                this.statusText.Text = "No Speech Engine Found";
+            }
         }
 
+         /// <summary>
+         /// Handler for recognized speech events.
+         /// </summary>
+         /// <param name="sender">object sending the event.</param>
+         /// <param name="e">event arguments.</param>
+         private void SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+         {
+             // Speech utterance confidence below which we treat speech as if it hadn't been heard
+             const double ConfidenceThreshold = 0.3;
+
+             ClearRecognitionHighlights();
+
+             if (e.Result.Confidence >= ConfidenceThreshold)
+             {
+                 switch (e.Result.Semantics.Value.ToString())
+                 {
+                     case "PICTURE":
+                         TakePicture();
+                     break;
+                     case "QUIT":
+                        this.Close();
+                     break;
+                 }
+             }
+         }
+
+         /// <summary>
+         /// Remove any highlighting from recognition instructions.
+         /// </summary>
+         private void ClearRecognitionHighlights()
+         {
+             statusText.Text= "not recognized word";
+       //      foreach (Span span in recognitionSpans)
+       //      {
+      //           span.Foreground = (Brush)this.Resources[MediumGreyBrushKey];
+      //           span.FontWeight = FontWeights.Normal;
+       //      }
+         }
+
+         /// <summary>
+         /// Handler for rejected speech events.
+         /// </summary>
+         /// <param name="sender">object sending the event.</param>
+         /// <param name="e">event arguments.</param>
+         private void SpeechRejected(object sender, SpeechRecognitionRejectedEventArgs e)
+         {
+             ClearRecognitionHighlights();
+         }
         //Event handler for colorframe
          void sensor_ColorFrameReady(object sender, ColorImageFrameReadyEventArgs e)
          {
@@ -108,7 +217,46 @@ namespace KinectDemo
              }
          }
 
+         /// <summary>
+         /// Handles the user clicking on the screenshot button
+         /// </summary>
+         /// <param name="sender">object sending the event</param>
+         /// <param name="e">event arguments</param>
+         private void TakePicture()
+         {
+             if (null == this.sensor)
+             {
+                 this.statusText.Text = "No Sensor";
+                 return;
+             }
 
+             // create a png bitmap encoder which knows how to save a .png file
+             BitmapEncoder encoder = new PngBitmapEncoder();
+
+             // create frame from the writable bitmap and add to encoder
+             encoder.Frames.Add(BitmapFrame.Create(this.colorBmp));
+
+             string time = System.DateTime.Now.ToString("hh'-'mm'-'ss", CultureInfo.CurrentUICulture.DateTimeFormat);
+
+             string myPhotos = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+
+             string path = Path.Combine(myPhotos, "KinectSnapshot-" + time + ".png");
+
+             // write the new file to disk
+             try
+             {
+                 using (FileStream fs = new FileStream(path, FileMode.Create))
+                 {
+                     encoder.Save(fs);
+                 }
+
+                 this.statusText.Text = string.Format(CultureInfo.InvariantCulture, "{0} {1}", "Screenshot successful", path);
+             }
+             catch (IOException)
+             {
+                 this.statusText.Text = string.Format(CultureInfo.InvariantCulture, "{0} {1}", "Screenshot failed", path);
+             }
+         }
          void StopKinect(KinectSensor sensor)
          {
              if (sensor != null)
