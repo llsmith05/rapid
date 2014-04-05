@@ -4,9 +4,10 @@
         xmlns:k="http://schemas.microsoft.com/kinect/2013" xmlns:WpfViewers="clr-namespace:Microsoft.Samples.Kinect.WpfViewers;assembly=Microsoft.Samples.Kinect.WpfViewers" x:Class="KinectDemo.MainWindow"
         Title="MainWindow" Height="600" Width="760" Loaded="Window_Loaded" Closing="Window_Closing">
     <Grid HorizontalAlignment="Left" Height="480" Margin="10,10,0,0" VerticalAlignment="Top" Width="735">
-        <Image x:Name="imgCanvas" HorizontalAlignment="Left" Height="480" Margin="45,0,0,0" VerticalAlignment="Top" Width="640"/>
-        <StatusBar HorizontalAlignment="Left" Height="69" Margin="45,485,0,-74" VerticalAlignment="Top" Width="640">
+        <Image x:Name="imgCanvas" HorizontalAlignment="Left" Height="269" Margin="45,0,0,0" VerticalAlignment="Top" Width="271"/>
+        <StatusBar HorizontalAlignment="Left" Height="69" Margin="45,485,0,-74" VerticalAlignment="Top" Width="45">
             <TextBlock x:Name="statusText" TextWrapping="Wrap" Text="Hello!" Height="15" Width="222"/>
         </StatusBar>
+        <Image HorizontalAlignment="Left" Height="345" Margin="316,19,0,0" VerticalAlignment="Top" Width="409"/>
     </Grid>
 </Window>
